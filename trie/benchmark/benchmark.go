@@ -233,8 +233,8 @@ func makeKVElts(srcKeys []string, srcVals [][]byte) []*TrieBenchKV {
 
 func trieSearchTestKV(ct *trie.SlimTrie, key string) []byte {
 
-	eq := ct.Get(key)
-	if eq == nil {
+	eq, found := ct.Get(key)
+	if !found {
 		return nil
 	}
 
