@@ -132,3 +132,43 @@ func BenchmarkArrayGet(b *testing.B) {
 		a.Get(5)
 	}
 }
+
+func BenchmarkXXXU16Get(b *testing.B) {
+	n := 1024 * 1024
+	indexes := make([]int32, n)
+	elts := make([]uint16, n)
+
+	for i := 0; i < n; i++ {
+		indexes[i] = int32(i)
+	}
+
+	b.ResetTimer()
+
+	a, err := array.NewU16(indexes, elts)
+	if err != nil {
+		panic(err)
+	}
+	for i := 0; i < b.N; i++ {
+		a.Get(int32(i * 29 % n))
+	}
+}
+
+func BenchmarkXXXU16SliceGet(b *testing.B) {
+	n := 1024 * 1024
+	elts := make([]uint16, n)
+
+	b.ResetTimer()
+
+	var m uint16
+
+	for i := 0; i < b.N; i++ {
+		// m = elts[i*29%n]
+		gg(&elts, i*29%n)
+	}
+
+	_ = m
+}
+
+func gg(sl *[]uint16, i int) uint16 {
+	return (*sl)[i]
+}

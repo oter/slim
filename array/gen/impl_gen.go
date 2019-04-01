@@ -27,6 +27,25 @@ func New{{.Name}}(index []int32, elts []{{.ValType}}) (a *{{.Name}}, err error) 
 	return a, err
 }
 
+
+	iBm, iBit := bmBit(idx)
+
+	if iBm >= int32(len(a.Bitmaps)) {
+		return 0, false
+	}
+
+	var n = a.Bitmaps[iBm]
+
+	if ((n >> uint(iBit)) & 1) == 0 {
+		return 0, false
+	}
+
+	cnt1 := bits.OnesCount64Before(n, uint(iBit))
+
+	stIdx := a.Offsets[iBm]*2 + int32(cnt1)*2
+
+	return endian.Uint16(a.Elts[stIdx:]), true
+
 // Get returns value at "idx" and a bool indicating if the value is
 // found.
 //
